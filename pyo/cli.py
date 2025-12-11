@@ -1,4 +1,5 @@
 """Command line entry points for pyo."""
+
 from __future__ import annotations
 
 import argparse
@@ -21,8 +22,12 @@ def build_parser() -> argparse.ArgumentParser:
         default="lemastertech",
         help="Folder within the assets/notes directory that contains WAV files.",
     )
-    parser.add_argument("--left-oct", type=int, default=3, help="Starting octave for the left hand.")
-    parser.add_argument("--right-oct", type=int, default=5, help="Starting octave for the right hand.")
+    parser.add_argument(
+        "--left-oct", type=int, default=3, help="Starting octave for the left hand."
+    )
+    parser.add_argument(
+        "--right-oct", type=int, default=5, help="Starting octave for the right hand."
+    )
     parser.add_argument("--fps", type=int, default=60, help="Target refresh rate for the display.")
     sub = parser.add_subparsers(dest="command", required=False)
     sub.add_parser("run", help="Start the interactive piano display")

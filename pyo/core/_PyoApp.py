@@ -1,4 +1,5 @@
 """Event loop that connects the piano model with the pygame interface."""
+
 from __future__ import annotations
 
 import pygame

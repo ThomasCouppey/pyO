@@ -1,4 +1,5 @@
 """Pygame-backed piano model that wraps samples and keyboard mappings."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -20,13 +21,15 @@ class ActiveKey:
         """Decrease the counter and report whether the key should stay highlighted."""
         self.frames_remaining -= 1
         return self.frames_remaining > 0
-    
+
 
 class Octave:
     """
-    Iterative class 
+    Iterative class
     """
-    NOTES: Sequence[str] = ("C","D","E", "F", "A", "B")
+
+    W_NOTES: Sequence[str] = ("C", "D", "E", "F", "A", "B")
+    B_NOTES: Sequence[str] = ("C", "D", "E", "F", "A", "B")
 
 
 class Piano:
@@ -195,7 +198,7 @@ class Piano:
 
     def __init__(
         self,
-        asset_root: Path|None,
+        asset_root: Path | None,
         sample_pack: str = "lemastertech",
         left_oct: int = 3,
         right_oct: int = 5,
@@ -237,7 +240,7 @@ class Piano:
     @property
     def n_white_notes(self) -> Sequence[str]:
         return len(self.WHITE_NOTES)
-    
+
     @property
     def n_black_notes(self) -> Sequence[str]:
         return len(self.BLACK_NOTES)

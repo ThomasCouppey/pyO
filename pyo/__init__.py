@@ -9,4 +9,3 @@ except metadata.PackageNotFoundError:  # pragma: no cover
 
 
 __all__ = ["__version__"]
-
