@@ -1,6 +1,6 @@
 # pyo
 
-<img src="./pyo/_misc/logo.png" alt="NRV" width="50%" height="auto" class="center">
+<img src="./pyo/_misc/logo.png" alt="NRV" width="30%" height="auto" class="center">
 
 pyo is a didactic numerical piano that can be played manually from keyboard or play songs highlighting the fingering. The project combines audio synthesis, MIDI IO, and a didactic display layer to support guided practice when learning new pieces.
 
