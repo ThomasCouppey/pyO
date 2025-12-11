@@ -1,0 +1,3 @@
+export PYTHONPATH="${PWD}:$PYTHONPATH"
+export PATH="$PWD/pyo:$PATH"
+export PYOPATH="${PWD}/pyo"

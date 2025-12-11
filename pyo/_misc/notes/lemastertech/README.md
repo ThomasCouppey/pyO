@@ -1,0 +1,1 @@
+Notes from [PythonPiano](https://github.com/plemaster01/PythonPiano) project.

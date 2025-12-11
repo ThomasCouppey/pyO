@@ -1,0 +1,24 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+.env/
+
+# Distribution / build
+build/
+dist/
+*.egg-info/
+
+# Tooling
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS noise
+.DS_Store
+.idea/
+.vscode/
