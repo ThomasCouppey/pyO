@@ -1,7 +1,5 @@
 from pyo import __version__
 
-from pyo.core.piano import lib_path
-
 def test_import():
     import pyo
 

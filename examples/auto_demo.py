@@ -13,8 +13,8 @@ from pyo.ui.interface import PianoInterface
 
 
 if __name__ == "__main__":
-    asset_root = PROJECT_ROOT / "pyo" / "_misc"
-    piano = Piano(asset_root=asset_root)
+    piano = Piano()
+    print(piano.asset_root)
     interface = PianoInterface(piano)
     app = PyoApp(piano, interface)
     app.display()

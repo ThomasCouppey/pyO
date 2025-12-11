@@ -9,6 +9,8 @@ from typing import Dict, Iterable, List, Sequence
 import pygame
 from pygame import mixer
 
+import os
+lib_path = Path(os.path.dirname(__file__)).parent.absolute()
 
 @dataclass
 class ActiveKey:
@@ -198,14 +200,17 @@ class Piano:
 
     def __init__(
         self,
-        asset_root: Path | None,
+        asset_root: Path | None = None,
         sample_pack: str = "lemastertech",
         left_oct: int = 3,
         right_oct: int = 5,
         highlight_frames: int = 30,
         mixer_channels: int = 50,
     ) -> None:
-        self.asset_root = Path(asset_root)
+        if asset_root is None:
+            self.asset_root = lib_path / "_misc"
+        else:
+            self.asset_root = Path(asset_root)
         self.sample_pack = sample_pack
         self.left_oct = self._clamp_octave(left_oct)
         self.right_oct = self._clamp_octave(right_oct)
