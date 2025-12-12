@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
+import os
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Sequence
 
 import pygame
 from pygame import mixer
 
-import os
 lib_path = Path(os.path.dirname(__file__)).parent.absolute()
 
 @dataclass
@@ -218,8 +218,8 @@ class Piano:
         self._ensure_audio_ready(mixer_channels)
         self.white_sounds = self._load_sounds(self.WHITE_NOTES)
         self.black_sounds = self._load_sounds(self.BLACK_NOTES)
-        self.active_whites: List[ActiveKey] = []
-        self.active_blacks: List[ActiveKey] = []
+        self.active_whites: list[ActiveKey] = []
+        self.active_blacks: list[ActiveKey] = []
 
     @staticmethod
     def _clamp_octave(value: int) -> int:
@@ -232,8 +232,8 @@ class Piano:
             mixer.init()
         mixer.set_num_channels(channels)
 
-    def _load_sounds(self, notes: Iterable[str]) -> List[mixer.Sound]:
-        sounds: List[mixer.Sound] = []
+    def _load_sounds(self, notes: Iterable[str]) -> list[mixer.Sound]:
+        sounds: list[mixer.Sound] = []
         sample_root = self.asset_root / "notes" / self.sample_pack
         for note in notes:
             wav_path = sample_root / f"{note}.wav"
@@ -266,14 +266,14 @@ class Piano:
     def right_hand_labels(self) -> Sequence[str]:
         return self.RIGHT_HAND_LABELS
 
-    def build_left_mapping(self) -> Dict[str, str]:
+    def build_left_mapping(self) -> dict[str, str]:
         return self._build_mapping(self.LEFT_TEMPLATE, self.left_oct)
 
-    def build_right_mapping(self) -> Dict[str, str]:
+    def build_right_mapping(self) -> dict[str, str]:
         return self._build_mapping(self.RIGHT_TEMPLATE, self.right_oct)
 
     @staticmethod
-    def _build_mapping(template: Sequence[tuple[str, str]], octave: int) -> Dict[str, str]:
+    def _build_mapping(template: Sequence[tuple[str, str]], octave: int) -> dict[str, str]:
         return {key: f"{note}{octave}" for key, note in template}
 
     def handle_text_input(self, text: str) -> bool:

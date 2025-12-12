@@ -1,9 +1,9 @@
 from pyo import __version__
 
-from pyo.core.piano import lib_path
 
 def test_import():
     import pyo
+    assert __version__ == pyo.__version__
 
 
 def test_version_string():

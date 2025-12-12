@@ -11,14 +11,14 @@ from pyo.ui.interface import PianoInterface
 class PyoApp:
     """Combine Piano + PianoInterface and drive the event loop."""
 
-    def __init__(self, piano: Piano, interface: PianoInterface, fps: int = 60) -> None:
+    def __init__(self, piano: Piano, interface: PianoInterface, fps: int = 60):
         self.piano = piano
         self.interface = interface
         self.clock = pygame.time.Clock()
         self.fps = fps
         pygame.key.start_text_input()
 
-    def display(self) -> None:
+    def display(self):
         """Start the blocking display loop."""
         running = True
         while running:
@@ -35,7 +35,7 @@ class PyoApp:
                     self._handle_keydown(event.key)
         pygame.quit()
 
-    def _handle_mouse(self, position, white_rects, black_rects) -> None:
+    def _handle_mouse(self, position, white_rects, black_rects):
         for i, rect in enumerate(black_rects):
             if rect.collidepoint(position):
                 self.piano.handle_mouse_black(i)
@@ -45,7 +45,7 @@ class PyoApp:
                 self.piano.handle_mouse_white(i)
                 return
 
-    def _handle_keydown(self, key: int) -> None:
+    def _handle_keydown(self, key: int):
         if key == pygame.K_RIGHT:
             self.piano.shift_right_octave(1)
         elif key == pygame.K_LEFT:

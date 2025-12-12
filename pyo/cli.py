@@ -40,7 +40,8 @@ def app(argv: list[str] | None = None) -> int:
     if args.command not in (None, "run"):
         parser.error(f"Unknown command: {args.command}")
 
-    from pyO.pyo.core._PyoApp import PianoApp
+    from pyO.pyo.core._pyoapp import PianoApp
+
     from pyo.core.piano import Piano
     from pyo.ui.interface import PianoInterface
 

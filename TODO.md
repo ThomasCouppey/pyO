@@ -18,6 +18,6 @@ LIST OF POINTS TO ADDRESS BEFORE NEXT VERSION
 - [ ]  **Developp IO methods**
     - [ ] Create music methods 
         - [ ] ...from .wave
-        - [ ] ...from .wave
+        - [ ] ...from partition
     - [ ] 
     
