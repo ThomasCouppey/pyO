@@ -12,6 +12,7 @@ from pygame import mixer
 
 lib_path = Path(os.path.dirname(__file__)).parent.absolute()
 
+
 @dataclass
 class ActiveKey:
     """Track highlight duration for pressed keys."""

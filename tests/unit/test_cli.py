@@ -3,6 +3,7 @@ from pyo import __version__
 
 def test_import():
     import pyo
+
     assert __version__ == pyo.__version__
 
 
