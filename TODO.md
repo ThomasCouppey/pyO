@@ -2,14 +2,14 @@ LIST OF POINTS TO ADDRESS BEFORE NEXT VERSION
 ---------------------------------------------
 
 - [ ] **Improve interface:**
-    - [ ] Externalize Interface build `_draw...` method from ``PianoInterface`` to allow multiple styles
+    - [ ] Externalize Interface build `_draw...` method from ``MIDI`` to allow multiple styles
 
 - [ ]  **Clean [piano.py](./pyo/core/piano.py):**
     - [ ]  Simplify piano class by automating keys creation
     - [ ]  see how to store more efficiently Notes properties (dic, class, both) ? 
 
 - [ ]  **Add Autoplayed interface:**
-    - [ ]  Add functionality in ``Piano``-class
+    - [ ]  Add functionality in ``Keyboard``-class
     - [ ]  Add a ``music`` class with recorded notes
     
     

@@ -42,16 +42,16 @@ def app(argv: list[str] | None = None) -> int:
 
     from pyO.pyo.core._pyoapp import PianoApp
 
-    from pyo.core.piano import Piano
-    from pyo.ui.interface import PianoInterface
+    from pyo.core._keyboard import Keyboard
+    from pyo.ui._midi import MIDI
 
-    piano = Piano(
+    piano = Keyboard(
         asset_root=args.assets,
         sample_pack=args.sample_pack,
         left_oct=args.left_oct,
         right_oct=args.right_oct,
     )
-    interface = PianoInterface(piano)
+    interface = MIDI(piano)
     PianoApp(piano, interface, fps=args.fps).display()
     return 0
 

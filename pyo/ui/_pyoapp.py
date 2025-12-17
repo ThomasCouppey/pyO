@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import pygame
 
-from pyo.core.piano import Piano
-from pyo.ui.interface import PianoInterface
+from pyo.core._keyboard import Keyboard
+from pyo.ui._midi import MIDI
 
 
 class PyoApp:
-    """Combine Piano + PianoInterface and drive the event loop."""
+    """Combine Keyboard + MIDI and drive the event loop."""
 
-    def __init__(self, piano: Piano, interface: PianoInterface, fps: int = 60):
+    def __init__(self, piano: Keyboard, interface: MIDI, fps: int = 60):
         self.piano = piano
         self.interface = interface
         self.clock = pygame.time.Clock()

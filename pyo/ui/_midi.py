@@ -177,33 +177,13 @@ class MIDI:
     ):
         for _i_active in self.piano.active_keys.index:
             is_black, _idx = self.piano.get_color(_i_active)
-            # print(_idx, _i_active, )
-            
             if not is_black:
-                _rect = white_rects[_idx] 
+                _rect = white_rects[_idx]
             else:
                 _rect = black_rects[_idx]
-            pygame.draw.rect(self.screen, (40,40,40,240), _rect, 0, 2)
+            pygame.draw.rect(self.screen, (40, 40, 40, 240), _rect, 0, 2)
 
         self.piano.decay()
-        # surviving_white = []
-
-        # for active in self.piano.active_whites:
-        #     idx = active.index
-        #     rect = pygame.Rect(idx * self.key_width, self.height - 100, self.key_width, 100)
-        #     pygame.draw.rect(self.screen, "green", rect, 2, 2)
-        #     if active.decay():
-        #         surviving_white.append(active)
-        # self.piano.active_whites = surviving_white
-
-        # surviving_black = []
-        # for active in self.piano.active_blacks:
-        #     idx = active.index
-        #     if 0 <= idx < len(black_rects):
-        #         pygame.draw.rect(self.screen, "green", black_rects[idx], 2, 2)
-        #     if active.decay():
-        #         surviving_black.append(active)
-        # self.piano.active_blacks = surviving_black
 
     def _draw_hand_guides(self):
         self._draw_hand_panel(self.piano.left_oct, self.piano.left_hand_labels, _which="left")
