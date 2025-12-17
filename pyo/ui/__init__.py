@@ -3,13 +3,14 @@ Module pyO.pyo.ui
 
 All Function/class and class related to the interface
 """
-
-from .interface import PianoInterface
+from ._pyoapp import PyoApp
+from ._midi import MIDI
 
 submodules = []
 
 classes = [
-    PianoInterface.__name__,
+    PyoApp.__name__,
+    MIDI.__name__,
 ]
 
 functions = []
