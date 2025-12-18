@@ -16,8 +16,12 @@ classes = [
 
 functions = []
 
+variables = [LEFT_HAND_LABELS, RIGHT_HAND_LABELS]
+
 __all__ = []
 
 __all__ += submodules
 __all__ += classes
 __all__ += functions
+__all__ += variables
+

@@ -1,4 +1,4 @@
 import pyo
 
-
-pyo.__version__
+def dummy_test():
+    assert isinstance(pyo.__version__, str)
