@@ -87,7 +87,7 @@ def test_octave_creation():
 def test_instantiate_keyboard():
     p = kb.Keyboard()
 
-    print(p.keys)
+    print(p.keys.iloc[2])
     p.press_key(3, 100)
     p.press_key(15, 100)
 
@@ -97,4 +97,4 @@ if __name__ == "__main__":
     # test_add_key_and_counts()
     # test_decay_decrements_and_returns()
     test_octave_creation()
-    # test_instantiate_keyboard()
+    test_instantiate_keyboard()

@@ -239,7 +239,7 @@ class Octave(Keys):
         while _i_key < len(self.W_NOTES) and self.n_keys < self.n_keys_max:
             _note = self.W_NOTES[_i_key]
             self.add_key([f"{_note}{self._id}", f"{_note}{self._id}", False, 0])
-            if _note in self.B_NOTES:
+            if _note in self.B_NOTES and self.n_keys < self.n_keys_max:
                 _note_b = self.W_NOTES[(_i_key + 1) % len(self.W_NOTES)]
                 self.add_key([f"{_note_b}b{self._id}", f"{_note}#{self._id}", True, 0])
             _i_key += 1
@@ -330,6 +330,9 @@ class Keyboard(Keys):
         for i in range(1, 8):
             self.oct_list += [Octave(oct_id=i)]
             self.add_keys(self.oct_list[-1])
+
+        self.oct_list += [Octave(oct_id=8, n_keys_max=88 - self.n_keys)]
+        self.add_keys(self.oct_list[-1])
 
     @staticmethod
     def _clamp_octave(value: int) -> int:

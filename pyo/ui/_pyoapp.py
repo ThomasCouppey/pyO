@@ -12,6 +12,17 @@ class PyoApp:
     """Combine Keyboard + MIDI and drive the event loop."""
 
     def __init__(self, piano: Keyboard, interface: MIDI, fps: int = 60):
+        """Wire the piano model to the pygame interface.
+
+        Parameters
+        ----------
+        piano : Keyboard
+            Keyboard instance that handles note playback and state.
+        interface : MIDI
+            UI renderer responsible for drawing and returning key rectangles.
+        fps : int, default=60
+            Target frames per second for the event loop.
+        """
         self.piano = piano
         self.interface = interface
         self.clock = pygame.time.Clock()
@@ -19,7 +30,13 @@ class PyoApp:
         pygame.key.start_text_input()
 
     def display(self):
-        """Start the blocking display loop."""
+        """Start the blocking display loop.
+
+        Returns
+        -------
+        None
+            Runs until the user closes the window.
+        """
         running = True
         while running:
             self.clock.tick(self.fps)
@@ -36,6 +53,17 @@ class PyoApp:
         pygame.quit()
 
     def _handle_mouse(self, position, white_rects, black_rects):
+        """Dispatch mouse events to the correct key handler.
+
+        Parameters
+        ----------
+        position : tuple[int, int]
+            Mouse coordinates relative to the window.
+        white_rects : Sequence[pygame.Rect]
+            Rectangles corresponding to white keys.
+        black_rects : Sequence[pygame.Rect]
+            Rectangles corresponding to black keys.
+        """
         for i, rect in enumerate(black_rects):
             if rect.collidepoint(position):
                 self.piano.handle_mouse_black(i)
@@ -46,6 +74,13 @@ class PyoApp:
                 return
 
     def _handle_keydown(self, key: int):
+        """Handle arrow key presses by shifting octaves.
+
+        Parameters
+        ----------
+        key : int
+            Pygame key code.
+        """
         if key == pygame.K_RIGHT:
             self.piano.shift_right_octave(1)
         elif key == pygame.K_LEFT:

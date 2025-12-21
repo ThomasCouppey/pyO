@@ -1,4 +1,4 @@
-"""Pygame drawing helpers for the piano display."""
+"""Pygame-backed rendering helpers for the on-screen piano keyboard."""
 
 from __future__ import annotations
 
@@ -13,9 +13,14 @@ from pyo.core._keyboard import Keyboard
 
 M_INFO = get_monitors()[0]
 
+key_colors = {
+    "black": {"0": "black", "1": (0, 100, 0)},
+    "white": {"0": "white", "1": (0, 255, 0)},
+}
+
 
 class MIDI:
-    """Handle the visual representation of the keyboard + labels."""
+    """Render the visual representation of the keyboard and helper overlays."""
 
     def __init__(
         self,
@@ -26,6 +31,22 @@ class MIDI:
         font_path: Path | None = None,
         title: str = "pyO Keyboard",
     ):
+        """Create a new renderer bound to a :class:`~pyo.core._keyboard.Keyboard`.
+
+        Parameters
+        ----------
+        piano : Keyboard
+            Keyboard instance that provides notes, labels, and active state.
+        width : int, optional
+            Window width in pixels; defaults to 90% of the primary monitor width.
+        height : int, optional
+            Window height in pixels; defaults to 30% of the primary monitor height.
+        font_path : pathlib.Path, optional
+            Custom font to use when drawing labels; falls back to Arial when not
+            supplied or missing.
+        title : str, default=\"pyO Keyboard\"
+            Caption set on the pygame display surface.
+        """
         self.piano = piano
         if not pygame.get_init():
             pygame.init()
@@ -42,59 +63,104 @@ class MIDI:
 
     @property
     def keyboard_top(self) -> float:
+        """
+        Returns
+        -------
+        float
+            Pixel coordinate of the bottom of the drawable area.
+        """
         return self.height
 
     @property
     def key_width(self) -> float:
         """
-        Width of a white key (in pixels)
+        Width of a white key in pixels.
 
         Note
         ----
-        This value is allways equal to the window size devided by the number of keys
+        This value always equals the window width divided by the number of white keys.
         """
         return self.width // len(self.piano.white_notes)
 
     @property
     def keyboard_width(self) -> float:
+        """
+        Returns
+        -------
+        float
+            Total width occupied by the keyboard portion of the window.
+        """
         return self.key_width * len(self.piano.white_notes)
 
     # TODO measure real size and ratios
     @property
     def bkey_width(self) -> float:
         """
-        Width of a black key (in pixels)
+        Width of a black key in pixels.
 
         Note
         ----
-        Equal to ...
+        Approximated at 70% of a white key width.
         """
         return 0.7 * self.key_width
 
     @property
     def key_height(self) -> float:
         """
-        Height of a white key (in pixels)
+        Returns
+        -------
+        float
+            Height of a white key in pixels.
         """
         return 0.9 * self.keyboard_top
 
     @property
     def bkey_height(self) -> float:
         """
-        Height of a black key (in pixels)
+        Returns
+        -------
+        float
+            Height of a black key in pixels.
         """
         return 0.7 * self.key_height
 
     @property
     def bkey_offset(self) -> float:
+        """
+        Returns
+        -------
+        float
+            Horizontal offset to position a black key relative to the preceding white key.
+        """
         return self.key_width - self.bkey_width / 2
 
     def _load_font(self, font_path: Path | None, size: int) -> pygame.font.Font:
+        """Load a font from disk or fall back to the system default.
+
+        Parameters
+        ----------
+        font_path : pathlib.Path, optional
+            Path to the TTF file; ignored when missing or ``None``.
+        size : int
+            Font size in points.
+
+        Returns
+        -------
+        pygame.font.Font
+            Loaded font ready for rendering text surfaces.
+        """
         if font_path is not None and font_path.exists():
             return pygame.font.Font(str(font_path), size)
         return pygame.font.SysFont("arial", size)
 
     def render_frame(self) -> tuple[list[pygame.Rect], list[pygame.Rect]]:
+        """Draw a full frame including keyboard and helper overlays.
+
+        Returns
+        -------
+        tuple[list[pygame.Rect], list[pygame.Rect]]
+            Rectangles corresponding to white and black keys, respectively.
+        """
         self.screen.fill("gray")
         white_rects, black_rects = self._draw_keyboard()
         self._draw_hand_guides()
@@ -102,50 +168,95 @@ class MIDI:
         return white_rects, black_rects
 
     def _draw_keyboard(self) -> tuple[list[pygame.Rect], list[pygame.Rect]]:
+        """Render all keys, highlights, and top bar.
+
+        Returns
+        -------
+        tuple[list[pygame.Rect], list[pygame.Rect]]
+            Rectangles for white keys and black keys.
+        """
         white_rects: list[pygame.Rect] = []
-        for i in range(len(self.piano.white_notes)):
-            _x = i * self.key_width
+        black_rects: list[pygame.Rect] = []
+        _is_black: bool = False
+        for _i_key in range(self.piano.n_keys):
+            if not _is_black:
+                white_rects, black_rects, _is_black = self._draw_key(
+                    _i_key,
+                    white_rects,
+                    black_rects,
+                )
+            else:
+                _is_black = False
+        self._draw_top()
+        self.piano.decay()
+        return white_rects, black_rects
+
+    def _draw_key(
+        self,
+        kindex: int,
+        white_rects: tuple[list[pygame.Rect]],
+        black_rects: tuple[list[pygame.Rect]],
+    ) -> tuple[list[pygame.Rect], list[pygame.Rect]]:
+        """Draw an individual key and return updated rectangles.
+
+        Parameters
+        ----------
+        kindex : int
+            Index of the key to render within :attr:`piano.keys`.
+        white_rects : tuple[list[pygame.Rect]]
+            Accumulator for white key rectangles (order is preserved).
+        black_rects : tuple[list[pygame.Rect]]
+            Accumulator for black key rectangles (order is preserved).
+
+        Returns
+        -------
+        tuple[list[pygame.Rect], list[pygame.Rect]]
+            Updated accumulators reflecting the newly drawn key.
+        """
+        _key = self.piano.keys.iloc[kindex]
+        _is_active = (_key["n_active_frames"] > 0).astype(int)
+        _color_kindex = len(white_rects)
+
+        if _key["is_black_key"]:
+            #! Not ideal: draw following white to impose all black notes in front
+            white_rects, black_rects, _ = self._draw_key(kindex + 1, white_rects, black_rects)
+            #! ---
+            _x = self.bkey_offset + ((_color_kindex - 1) * self.key_width)
+            _y = self.height - self.key_height
+            _dx = self.bkey_width
+            _dy = self.bkey_height
+            _color = key_colors["black"][str(_is_active)]
+        else:
+            _x = _color_kindex * self.key_width
             _y = self.height - self.key_height
             _dx = self.key_width
             _dy = self.key_height
-            rect = pygame.draw.rect(
-                self.screen,
-                "white",
-                [_x, _y, _dx, _dy],
-                0,
-                2,
-            )
-            white_rects.append(rect)
-            pygame.draw.rect(
-                self.screen,
-                "black",
-                [_x, _y, _dx, _dy],
-                2,
-                2,
-            )
+            _color = key_colors["white"][str(_is_active)]
 
-        # TODO add option to start from different keys, see if this should be specified here or in
-        # piano class
-        black_rects: list[pygame.Rect] = []
-        oct_count = 4
-        for i in range(self.piano.n_white_keys):
-            oct_count = (oct_count + 1) % 7
-            if oct_count not in [2, 6]:
-                _x = self.bkey_offset + (i * self.key_width)  # + (skip_count * self.key_width)
-                _y = self.height - self.key_height
-                _dx = self.bkey_width
-                _dy = self.bkey_height
-                rect = pygame.draw.rect(
-                    self.screen,
-                    "black",
-                    [_x, _y, _dx, _dy],
-                    0,
-                    2,
-                )
-                black_rects.append(rect)
-        self._draw_highlights(white_rects, black_rects)
+        rect = pygame.draw.rect(
+            self.screen,
+            _color,
+            [_x, _y, _dx, _dy],
+            0,
+            2,
+        )
+        pygame.draw.rect(
+            self.screen,
+            "black",
+            [_x, _y, _dx, _dy],
+            2,
+            2,
+        )
 
+        if _key["is_black_key"]:
+            return white_rects, black_rects + [rect], True
+        else:
+            return white_rects + [rect], black_rects, False
+
+    def _draw_top(self):
+        """Draw the top bar that caps the keyboard body."""
         # Drawing the top part the piano
+        _y = self.height - self.key_height
         pygame.draw.rect(
             self.screen,
             (50, 50, 50),
@@ -161,9 +272,8 @@ class MIDI:
             2,
         )
 
-        return white_rects, black_rects
-
     def _add_key_labels(self):
+        """Render small note labels on a subset of keys."""
         for i, note in enumerate(self.piano.white_notes[:3]):
             label = self.small_font.render(note, True, "black")
             self.screen.blit(label, (i * self.key_width + 3, self.height - 20))
@@ -175,6 +285,15 @@ class MIDI:
     def _draw_highlights(
         self, white_rects: Sequence[pygame.Rect], black_rects: Sequence[pygame.Rect]
     ):
+        """Shade active keys based on the keyboard state.
+
+        Parameters
+        ----------
+        white_rects : Sequence[pygame.Rect]
+            Rectangles representing the white keys.
+        black_rects : Sequence[pygame.Rect]
+            Rectangles representing the black keys.
+        """
         for _i_active in self.piano.active_keys.index:
             is_black, _idx = self.piano.get_color(_i_active)
             if not is_black:
@@ -186,12 +305,24 @@ class MIDI:
         self.piano.decay()
 
     def _draw_hand_guides(self):
+        """Draw visual guides showing the active left/right hand octaves."""
         self._draw_hand_panel(self.piano.left_oct, self.piano.left_hand_labels, _which="left")
         self._draw_hand_panel(self.piano.right_oct, self.piano.right_hand_labels, _which="right")
 
     def _draw_hand_panel(
         self, octave: int, labels: Sequence[str], _which: Literal["left", "right"]
     ):
+        """Render an octave guide panel for one hand.
+
+        Parameters
+        ----------
+        octave : int
+            Octave index to highlight.
+        labels : Sequence[str]
+            Labels (keyboard glyphs) mapped to notes for the chosen hand.
+        _which : {\"left\", \"right\"}
+            Indicates which hand panel is drawn; influences arrow direction.
+        """
 
         panel_dx = 7 * self.key_width
         # Fist octave (oct0) starts at 5th note
